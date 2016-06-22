@@ -1,8 +1,27 @@
 # SqliteExt
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/sqlite_ext`. To experiment with that code, run `bin/console` for an interactive prompt.
+Note that the work on this gem is still in the early stages, and
+it doesn't actually do anything useful yet.  In the near future
+though, ...
 
-TODO: Delete this and the text above, and describe your gem
+Provides a convenient way of writing functions in Ruby that can
+be called from with in SQLite queries through the SQLite3 gem.
+
+Although it is already possible to write ruby code for functions
+that can be called from within SQL queries using SQLite via the
+SQLite3 gem, that has some limitations which this gem seeks to
+address.
+
+First, when utilizing `SQLite3::Database#create_function`, the
+added function only exists for the current instance of
+`SQLite3::Database`. If that instance is being accessed through
+a connection pool (e.g. via ActiveRecord) then there it is hard
+to ensure that the functions are created on each new instance
+before the SQL that needs them to exist is executed.
+
+Secondly, the Ruby code needed to define a trivial SQL-callable
+function using `SQLite3::Database#create_function` is fairly
+verbose, and it would be nice to have a simpler API.
 
 ## Installation
 
@@ -22,7 +41,7 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Usage instructions coming soon. Once there's functionality to use.
 
 ## Development
 
