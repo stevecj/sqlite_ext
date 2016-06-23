@@ -7,8 +7,8 @@ module SqliteExt
           yield db
         end
       else
-        db = super
-        SqliteExt.enhance_db_session db
+        super
+        SqliteExt.enhance_db_session self
       end
     end
   end
