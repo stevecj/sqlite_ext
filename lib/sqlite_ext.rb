@@ -16,11 +16,34 @@ module SqliteExt
 
   class << self
 
+    # Registers a block of ruby code to be used as a function in
+    # SQL executed through subsequent new instances of
+    # `SQLite3::Database`.
+    #
+    # Example:
+    #
+    # SqliteExt.register_function('sqrt', 1){ |x| Math.sqrt(x) }
+    #
+    # SQLite3::Database.new 'data.db' do |db|
+    #   puts db.execute("SELECT sqrt(25)")[0][0]
+    # end
+    # # Output: 5.0
+    #
+    def register_function(name, &block)
+      register_create_function name, block.arity do |fn,*args|
+        fn.result = block.call(*args)
+      end
+    end
+
     # Registers a #create_function call to be invoked on every
     # new instance of `SQLite3::Database` immidately after it is
     # instantiated and before it is returned from the call to
     # `.new` and before the invocation of a block that is passed
     # to `.new`.
+    #
+    # The parameters passed to `#register_create_function` are
+    # exactly the same as those that would be passed to
+    # `SQLite3::Database#create_function`.
     #
     # Note that this only affects instances of
     # `SQLite3::Database` that are subsequently created and has
@@ -28,18 +51,19 @@ module SqliteExt
     #
     # Example:
     #
-    #  SqliteExt.register_create_function 'sqrt', 1 do |fn,x|
-    #     fn.result =
-    #       case x
-    #         when nil then nil
-    #         else Math.sqrt(x)
-    #         end
-    #       end
+    # SqliteExt.register_create_function 'sqrt', 1 do |fn,x|
+    #    fn.result =
+    #      case x
+    #        when nil then nil
+    #        else Math.sqrt(x)
+    #        end
+    #      end
     #
-    #       SQLite3::Database.new 'data.db' do |db|
-    #         puts db.execute("SELECT sqrt(25)")[0][0]
-    #       end
-    #       # Output: 5.0
+    # SQLite3::Database.new 'data.db' do |db|
+    #   puts db.execute("SELECT sqrt(25)")[0][0]
+    # end
+    # # Output: 5.0
+    #
     def register_create_function(name, arity, *other_args, &block)
       name = "#{name}"
       registered_function_creations[name] = [

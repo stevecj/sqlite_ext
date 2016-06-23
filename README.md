@@ -1,9 +1,5 @@
 # SqliteExt
 
-Note that the work on this gem is still in the early stages, so
-the text below represents what it is intended to do. The gem does
-not yet accomplish all of that as of yet.
-
 Provides a convenient way of writing functions in Ruby that can
 be called from with in SQLite queries through the SQLite3 gem.
 
@@ -41,14 +37,8 @@ Or install it yourself as:
 
 ## Usage
 
-    SqliteExt.register_create_function 'sqrt', 1 do |fn,x|
-      fn.result =
-        case x
-        when nil then nil
-        else Math.sqrt(x)
-        end
-    end
-
+    SqliteExt.register_function('sqrt', 1){ |x| Math.sqrt(x) }
+    
     SQLite3::Database.new 'data.db' do |db|
       puts db.execute("SELECT sqrt(25)")[0][0]
     end

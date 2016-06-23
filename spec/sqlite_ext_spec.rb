@@ -27,7 +27,7 @@ describe SqliteExt do
 
     self.db = SQLite3::Database.new(TEST_DB_FILE)
     actual = db.execute("SELECT sqrt(25)")
-    expect( actual ).to eq( [[5]] )
+    expect( actual ).to eq( [[5.0]] )
   end
 
   it "provides a collection of registered function names" do
@@ -35,6 +35,16 @@ describe SqliteExt do
     subject.register_create_function 'bar', 1 do |fn,x| ; end
     expect( subject.registered_function_names ).
       to contain_exactly( 'foo', 'bar' )
+  end
+
+  it "allows registering a function to be auto-created for a block that simply returns a value" do
+    subject.register_function "sqrt" do |x|
+      Math.sqrt(x)
+    end
+
+    self.db = SQLite3::Database.new(TEST_DB_FILE)
+    actual = db.execute("SELECT sqrt(25)")
+    expect( actual ).to eq( [[5.0]] )
   end
 
 end
