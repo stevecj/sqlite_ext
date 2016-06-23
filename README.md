@@ -1,7 +1,7 @@
 # SqliteExt
 
 Provides a convenient way of writing functions in Ruby that can
-be called from with in SQLite queries through the SQLite3 gem.
+be called from within SQLite queries through the SQLite3 gem.
 
 Although it is already possible to write ruby code for functions
 that can be called from within SQL queries using SQLite via the
@@ -37,7 +37,7 @@ Or install it yourself as:
 
 ## Usage
 
-    SqliteExt.register_function('sqrt', 1){ |x| Math.sqrt(x) }
+    SqliteExt.register_function('sqrt'){ |x| Math.sqrt(x) }
     
     SQLite3::Database.new 'data.db' do |db|
       puts db.execute("SELECT sqrt(25)")[0][0]

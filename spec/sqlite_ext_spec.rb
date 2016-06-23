@@ -38,9 +38,7 @@ describe SqliteExt do
   end
 
   it "allows registering a function to be auto-created for a block that simply returns a value" do
-    subject.register_function "sqrt" do |x|
-      Math.sqrt(x)
-    end
+    subject.register_function("sqrt"){ |x| Math.sqrt(x) }
 
     self.db = SQLite3::Database.new(TEST_DB_FILE)
     actual = db.execute("SELECT sqrt(25)")

@@ -22,7 +22,7 @@ module SqliteExt
     #
     # Example:
     #
-    # SqliteExt.register_function('sqrt', 1){ |x| Math.sqrt(x) }
+    # SqliteExt.register_function('sqrt'){ |x| Math.sqrt(x) }
     #
     # SQLite3::Database.new 'data.db' do |db|
     #   puts db.execute("SELECT sqrt(25)")[0][0]

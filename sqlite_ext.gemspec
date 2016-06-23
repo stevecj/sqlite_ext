@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["stevej@stevej.name"]
 
   spec.summary       = "Provides a convenient way of writing functions in Ruby that can " \
-                       "be called from with in SQLite queries through the SQLite3 gem."
+                       "be called from within SQLite queries through the SQLite3 gem."
   spec.homepage      = "https://github.com/stevecj/sqlite_ext"
   spec.license       = "MIT"
 
