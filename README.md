@@ -1,8 +1,8 @@
 # SqliteExt
 
-Note that the work on this gem is still in the early stages, and
-it doesn't actually do anything useful yet.  In the near future
-though, ...
+Note that the work on this gem is still in the early stages, so
+the text below represents what it is intended to do. The gem does
+not yet accomplish all of that as of yet.
 
 Provides a convenient way of writing functions in Ruby that can
 be called from with in SQLite queries through the SQLite3 gem.
@@ -41,7 +41,18 @@ Or install it yourself as:
 
 ## Usage
 
-Usage instructions coming soon. Once there's functionality to use.
+    SqliteExt.register_create_function 'sqrt', 1 do |fn,x|
+      fn.result =
+        case x
+        when nil then nil
+        else Math.sqrt(x)
+        end
+    end
+
+    SQLite3::Database.new 'data.db' do |db|
+      puts db.execute("SELECT sqrt(25)")[0][0]
+    end
+    # Output: 5.0
 
 ## Development
 
@@ -51,7 +62,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/sqlite_ext. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/stevecj/sqlite_ext. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 
 ## License
