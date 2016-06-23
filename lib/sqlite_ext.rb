@@ -88,7 +88,7 @@ module SqliteExt
     # `SQLite3::Database`.
     #
     # This is normally called automatically for each new
-    # instance, but can also be used to add the functions to
+    # instance, but it can also be used to add the functions to
     # an instance that was created before the functions were
     # registered.
     def enhance_db_session(db)
