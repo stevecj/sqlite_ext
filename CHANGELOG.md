@@ -1,3 +1,8 @@
+### 1.0.0 - 2016-06-23
+* Features
+  * Added `SqliteExt.register_ruby_math`. Registers most of Ruby's `Math`
+    module methods as SQLite SQL functions.
+
 ### 0.3.0 - 2016-06-23
 * Removals
   * Removed support for a block argument to `SqliteExt.register_function`.

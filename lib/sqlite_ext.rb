@@ -69,6 +69,23 @@ module SqliteExt
       end
     end
 
+    # Registers most of the public module methods of Ruby's `Math`
+    # module to be used as a functions in SQL code executed
+    # through subsequent new instances of `SQLite3::Database`.
+    #
+    # The `Math.frexp` method is omitted becuse it returns an
+    # array, and there is no way to return an array from a SQL
+    # function in SQLite.
+    #
+    # `NULL`s are propagated as described in the documentation
+    # for `register_function`.
+    def register_ruby_math
+      fn_methods = Math.public_methods - (Module.instance_methods << :frexp)
+      fn_methods.each do |m|
+        register_function m, Math.method(m)
+      end
+    end
+
     # Registers a #create_function call to be invoked on every
     # new instance of `SQLite3::Database` immidately after it is
     # instantiated and before it is returned from the call to

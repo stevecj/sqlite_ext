@@ -38,19 +38,41 @@ Or install it yourself as:
 ## Usage
 
     SqliteExt.register_function(
-      'sqrt',
-      ->(x){ Math.sqrt(x) }
+      'sign',
+      ->(x){ x <=> 0 }
     )
 
     SQLite3::Database.new 'data.db' do |db|
-      puts db.execute(
-        "SELECT sqrt(25), COALESCE(sqrt(NULL), -1)"
-      ).first
+      puts db.execute(<<-EOS).first
+        SELECT
+            sign(2)
+          , sign(-3)
+          , sign(0)
+          , COALESCE(sign(NULL), 'n/a')
+      EOS
+    end
+
+    # == Output ==
+    # 1
+    # -1
+    # 0
+    # n/a
+
+    SqliteExt.register_ruby_math
+
+    SQLite3::Database.new 'data.db' do |db|
+      puts db.execute(<<-EOS).first
+        SELECT
+            sqrt(25)
+          , cos(asin(3.0/5.0))
+          , COALESCE(sqrt(NULL), 'n/a')
+      EOS
     end
 
     # == Output ==
     # 5.0
-    # -1
+    # 0.8
+    # n/a
 
 ## Development
 
