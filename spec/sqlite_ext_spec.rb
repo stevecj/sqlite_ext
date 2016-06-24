@@ -37,12 +37,46 @@ describe SqliteExt do
       to contain_exactly( 'foo', 'bar' )
   end
 
-  it "allows registering a function to be auto-created for a block that simply returns a value" do
-    subject.register_function("sqrt"){ |x| Math.sqrt(x) }
+  describe "registration of a function for a block that returns a value" do
+    before do
+      subject.register_function("format", ->(template, v1, *vv){
+        vv.map!{ |v| v || -1 }
+        template % [v1, *vv]
+      })
+      self.db = SQLite3::Database.new(TEST_DB_FILE)
+    end
 
-    self.db = SQLite3::Database.new(TEST_DB_FILE)
-    actual = db.execute("SELECT sqrt(25)")
-    expect( actual ).to eq( [[5.0]] )
+    it "uses the specified function to process non-NULL values" do
+      actual = db.execute(
+        "SELECT format('result: %d %d', 8, 9)"
+      )[0][0]
+
+      expect( actual ).to eq('result: 8 9')
+    end
+
+    it "propagates NULLs for any required arguments" do
+      actual = db.execute( <<-EOS )[0]
+        SELECT
+            format( NULL,             NULL )
+          , format( 'result: %d, %d', NULL )
+          , format( NULL,             5    )
+      EOS
+
+      expect( actual ).to eq( [nil, nil, nil] )
+    end
+
+    it "processes NULLs for any optional arguments" do
+      actual = db.execute( <<-EOS )[0]
+        SELECT
+          format('result: %d %d', 8, NULL),
+          format('result: %d %d %d', 8, NULL, NULL)
+      EOS
+
+      expect( actual ).to eq([
+        'result: 8 -1',
+        'result: 8 -1 -1'
+      ])
+    end
   end
 
 end

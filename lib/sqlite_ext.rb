@@ -16,22 +16,56 @@ module SqliteExt
 
   class << self
 
-    # Registers a block of ruby code to be used as a function in
-    # SQL executed through subsequent new instances of
+    # Registers a Ruby `Proc` to be used as a function in SQL
+    # code executed through subsequent new instances of
     # `SQLite3::Database`.
+    #
+    # When `NULL` value is passed 1 or more of the `Proc`'s
+    # required parameters, it will be "propagated", meaning that
+    # the specified `Proc` will not be invoked and `NULL` will be
+    # returned from the call in SQL.
+    #
+    # When non-`NULL` values are passed to all of the `Proc`'s
+    # required parameters and `NULL` is passed to any or all of
+    # the `Proc`'s optional parameters, they will NOT be
+    # propagated, and the `Proc` WILL be invoked. Values passed
+    # as `NULL` in SQL will be forwarded to the `Proc` as Ruby
+    # `nil`s.
+    #
+    # Whenever the `Proc` is called and returns `nil`, that will
+    # result in `NULL` being returned from the function call in
+    # SQL.
     #
     # Example:
     #
-    # SqliteExt.register_function('sqrt'){ |x| Math.sqrt(x) }
+    # SqliteExt.register_function(
+    #   'sqrt',
+    #   ->(x){ Math.sqrt(x) }
+    # )
     #
     # SQLite3::Database.new 'data.db' do |db|
-    #   puts db.execute("SELECT sqrt(25)")[0][0]
+    #   puts db.execute(
+    #     "SELECT sqrt(25), COALESCE(sqrt(NULL), -1)"
+    #   ).first
     # end
-    # # Output: 5.0
     #
-    def register_function(name, &block)
-      register_create_function name, block.arity do |fn,*args|
-        fn.result = block.call(*args)
+    # # == Output ==
+    # # 5.0
+    # # -1
+    #
+    def register_function(name, prok)
+      minimum_arity =
+        prok.
+        parameters.select{ |(kind,_)| kind == :req }.
+        count
+
+      register_create_function name, minimum_arity do |fn,*args|
+        fn.result =
+          if args[0...minimum_arity].any?{ |a| a.nil? }
+            nil
+          else
+            prok.call(*args)
+          end
       end
     end
 

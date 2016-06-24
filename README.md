@@ -37,12 +37,20 @@ Or install it yourself as:
 
 ## Usage
 
-    SqliteExt.register_function('sqrt'){ |x| Math.sqrt(x) }
-    
+    SqliteExt.register_function(
+      'sqrt',
+      ->(x){ Math.sqrt(x) }
+    )
+
     SQLite3::Database.new 'data.db' do |db|
-      puts db.execute("SELECT sqrt(25)")[0][0]
+      puts db.execute(
+        "SELECT sqrt(25), COALESCE(sqrt(NULL), -1)"
+      ).first
     end
-    # Output: 5.0
+
+    # == Output ==
+    # 5.0
+    # -1
 
 ## Development
 
