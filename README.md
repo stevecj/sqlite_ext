@@ -1,11 +1,11 @@
 # SqliteExt
 
 Provides a convenient way of writing functions in Ruby that can
-be called from within SQLite queries through the SQLite3 gem.
+be called from within SQLite queries through the sqlite3 gem.
 
 Although it is already possible to write ruby code for functions
 that can be called from within SQL queries using SQLite via the
-SQLite3 gem, that has some limitations which this gem seeks to
+sqlite3 gem, that has some limitations which this gem seeks to
 address.
 
 First, when utilizing `SQLite3::Database#create_function`, the
