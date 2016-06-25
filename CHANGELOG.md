@@ -1,3 +1,8 @@
+### 1.1.0 - 2016-05-25
+* Enhancements
+  * `SqliteExt.register_ruby_math` now also registers `floor` and `ceil`
+    functions.
+
 ### 1.0.0 - 2016-06-23
 * Features
   * Added `SqliteExt.register_ruby_math`. Registers most of Ruby's `Math`
