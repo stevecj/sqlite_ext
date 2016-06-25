@@ -37,20 +37,44 @@ describe SqliteExt do
       to contain_exactly( 'foo', 'bar' )
   end
 
-  it "allows registering Ruby's Math.* methods as functions" do
-    subject.register_ruby_math
-
-    actual = nil
-    SQLite3::Database.new(TEST_DB_FILE) do |db|
-      actual = db.execute(<<-EOS).first
-        SELECT
-          cbrt(125),
-          log(1000, 10)
-      EOS
+  describe "registration of Ruby math" do
+    before do
+      subject.register_ruby_math
     end
 
-    expect( actual[0] ).to be_within( 0.00001 ).of( 5.0 )
-    expect( actual[1] ).to be_within( 0.00001 ).of( 3.0 )
+    it "registers singleton methods from Ruby's `Math` module as functions" do
+      actual = nil
+      SQLite3::Database.new(TEST_DB_FILE) do |db|
+        actual = db.execute(<<-EOS).first
+          SELECT
+            cbrt(125),
+            log(1000, 10)
+        EOS
+      end
+
+      expect( actual[0] ).to be_within( 0.00001 ).of( 5.0 )
+      expect( actual[1] ).to be_within( 0.00001 ).of( 3.0 )
+    end
+
+    it "registers `floor` and `ceil` functions" do
+      actual = nil
+      SQLite3::Database.new(TEST_DB_FILE) do |db|
+        actual = db.execute(<<-EOS).first
+          SELECT
+            floor( 1.9 ),
+            floor(-1.9 ),
+            ceil( 1.1 ),
+            ceil(-1.1 )
+        EOS
+      end
+
+      expect( actual ).to eq([
+         1.0,
+        -2.0,
+         2.0,
+        -1.0
+      ])
+    end
   end
 
   describe "registration of a function for a block that returns a value" do
