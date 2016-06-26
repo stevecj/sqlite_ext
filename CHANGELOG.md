@@ -1,3 +1,8 @@
+### 1.3.0 - 2016-05-25
+* Features
+  * Adds `SQLite3::Database.function_created?` to check whether a
+    function with a given name has been created on the target instance.
+
 ### 1.2.0 - 2016-05-25
 * Enhancements
   * `SqliteExt.register_ruby_math` no longer re-registers functions when
