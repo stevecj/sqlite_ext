@@ -56,7 +56,21 @@ describe SqliteExt do
       expect( actual[1] ).to be_within( 0.00001 ).of( 3.0 )
     end
 
-    it "registers `floor` and `ceil` functions" do
+    it "registers `pi` and `e` functions returning math constants" do
+      actual = nil
+      SQLite3::Database.new(TEST_DB_FILE) do |db|
+        actual = db.execute(<<-EOS).first
+          SELECT
+            pi(),
+            e()
+        EOS
+      end
+
+      expect( actual[0] ).to be_within( 0.00001 ).of( 3.14159 )
+      expect( actual[1] ).to be_within( 0.00001 ).of( 2.71828 )
+    end
+
+    it "registers `floor`, `ceil`, `mod`, and `power` functions" do
       actual = nil
       SQLite3::Database.new(TEST_DB_FILE) do |db|
         actual = db.execute(<<-EOS).first
@@ -64,7 +78,11 @@ describe SqliteExt do
             floor( 1.9 ),
             floor(-1.9 ),
             ceil( 1.1 ),
-            ceil(-1.1 )
+            ceil(-1.1 ),
+            mod( 101.5, 100 ),
+            mod( -97.5, 100 ),
+            power( 2, 3 ),
+            power( 3, 2 )
         EOS
       end
 
@@ -72,7 +90,27 @@ describe SqliteExt do
          1.0,
         -2.0,
          2.0,
-        -1.0
+        -1.0,
+         1.5,
+         2.5,
+         8.0,
+         9.0
+      ])
+    end
+
+    it "registers `power` function" do
+      actual = nil
+      SQLite3::Database.new(TEST_DB_FILE) do |db|
+        actual = db.execute(<<-EOS).first
+          SELECT
+            power( 2, 3 ),
+            power( 3, 2 )
+        EOS
+      end
+
+      expect( actual ).to eq([
+        8.0,
+        9.0
       ])
     end
   end

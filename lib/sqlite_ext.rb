@@ -70,8 +70,9 @@ module SqliteExt
     end
 
     # Registers most of the public module methods of Ruby's
-    # `Math` module as well as `ceil` and `floor` to be used as
-    # functions in SQL code executed # through subsequent new
+    # `Math` module as well as `ceil`, `floor`, `mod`, and
+    # `power` based on `Float` instance methods to be used as
+    # functions in SQL code executed through subsequent new
     # instances of `SQLite3::Database`.
     #
     # The `Math.frexp` method is omitted becuse it returns an
@@ -101,8 +102,16 @@ module SqliteExt
       fn_methods.each do |m|
         register_function m, Math.method(m)
       end
-      [:floor, :ceil].each do |m|
-        register_function m, m.to_proc
+      register_function 'pi', ->(){ Math::PI }
+      register_function 'e',  ->(){ Math::E }
+      [
+        [ :floor ],
+        [ :ceil  ],
+        [ :modulo, :mod   ],
+        [ :**,     :power ]
+      ].each do |(*args)|
+        m, fn = args.first, args.last
+        register_function fn, m.to_proc
       end
       self.ruby_math_is_registered = true
     end

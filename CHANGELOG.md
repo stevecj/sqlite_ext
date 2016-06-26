@@ -1,4 +1,9 @@
-### 1.3.0 - 2016-05-25
+### 1.4.0 - 2016-05-26
+* Enhancements
+  * `SqliteExt.register_ruby_math` now also registers `pi`, `e`, `mod`,
+    and `power` functions.
+
+### 1.3.0 - 2016-05-26
 * Features
   * Adds `SQLite3::Database.function_created?` to check whether a
     function with a given name has been created on the target instance.
