@@ -1,3 +1,11 @@
+### 1.2.0 - 2016-05-25
+* Enhancements
+  * `SqliteExt.register_ruby_math` no longer re-registers functions when
+    they should already/still be registered.
+* Features
+  * `SqliteExt.register_ruby_math!` has been added to unconditionally
+    register or re-register Ruby math functions.
+
 ### 1.1.0 - 2016-05-25
 * Enhancements
   * `SqliteExt.register_ruby_math` now also registers `floor` and `ceil`
