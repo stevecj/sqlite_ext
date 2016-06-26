@@ -4,12 +4,12 @@ require "sqlite3"
 module SqliteExt
 
   require "sqlite_ext/version"
-  require "sqlite_ext/init_injection"
+  require "sqlite_ext/db_method_prepends"
 
 end
 
 class SQLite3::Database
-  prepend SqliteExt::InitInjection
+  prepend SqliteExt::DbMethodPrepends
 end
 
 module SqliteExt
