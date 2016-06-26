@@ -80,7 +80,23 @@ module SqliteExt
     #
     # `NULL`s are propagated as described in the documentation
     # for `register_function`.
+    #
+    # Note that calling `register_ruby_math` more than once
+    # without calling `purge_function_registrations` in between
+    # has no effect. Ruby math functions remain registered and
+    # are not re-registered in that case.
     def register_ruby_math
+      return if ruby_math_is_registered
+      register_ruby_math!
+    end
+
+    # Registers or re-registers Ruby math. You may want to call
+    # this method if one or more of the functions defined by a
+    # previous call to `register_ruby_math` or
+    # `register_ruby_math!` may have been subsequently replaced.
+    #
+    # See `register_ruby_math`.
+    def register_ruby_math!
       fn_methods = Math.public_methods - (Module.instance_methods << :frexp)
       fn_methods.each do |m|
         register_function m, Math.method(m)
@@ -88,6 +104,7 @@ module SqliteExt
       [:floor, :ceil].each do |m|
         register_function m, m.to_proc
       end
+      self.ruby_math_is_registered = true
     end
 
     # Registers a #create_function call to be invoked on every
@@ -137,6 +154,7 @@ module SqliteExt
     # existing instances of `SQLite3::Database`.
     def purge_function_registrations
       registered_function_creations.clear
+      self.ruby_math_is_registered = false
     end
 
     # Creates all of the registered functions on an instance of
@@ -154,8 +172,11 @@ module SqliteExt
 
     private
 
+    attr_accessor :ruby_math_is_registered
+
     def registered_function_creations
       @registered_function_creations ||= {}
     end
+
   end
 end
