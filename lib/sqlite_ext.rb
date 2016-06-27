@@ -2,14 +2,14 @@ gem "sqlite3"
 require "sqlite3"
 
 module SqliteExt
-
   require "sqlite_ext/version"
-  require "sqlite_ext/db_method_prepends"
-
+  require "sqlite_ext/db_tracks_created_functions"
+  require "sqlite_ext/db_auto_creates_registered_functions"
 end
 
 class SQLite3::Database
-  prepend SqliteExt::DbMethodPrepends
+  prepend SqliteExt::DbTracksCreatedFunctions
+  prepend SqliteExt::DbAutoCreatesRegisteredFunctions
 end
 
 module SqliteExt
