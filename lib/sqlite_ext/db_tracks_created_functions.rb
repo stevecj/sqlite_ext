@@ -4,9 +4,25 @@ module SqliteExt
 
   module DbTracksCreatedFunctions
 
-    def create_function(name, arity, *other_args, &block)
-      super
-      created_function_names << name_key_from(name)
+    # Adds recording of names of created functions to
+    # `create_function`.
+    if RUBY_VERSION.split('.').first.to_i >= 2
+
+      def create_function(name, arity, *other_args, &block)
+        super
+        created_function_names << name_key_from(name)
+      end
+
+    else
+
+      def self.included(other)
+        orig_create_function = other.instance_method(:create_function)
+        other.send :define_method, :create_function, proc{ |name, arity, *other_args, &block|
+          orig_create_function.bind(self).call name, arity, *other_args, &block
+          created_function_names << name_key_from(name)
+        }
+      end
+
     end
 
     # Given a name, returns true if a function of that hane has

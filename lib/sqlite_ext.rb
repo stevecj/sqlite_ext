@@ -8,8 +8,15 @@ module SqliteExt
 end
 
 class SQLite3::Database
-  prepend SqliteExt::DbTracksCreatedFunctions
-  prepend SqliteExt::DbAutoCreatesRegisteredFunctions
+  if RUBY_VERSION.split('.').first.to_i >= 2
+    puts 'Ruby >= 2'
+    prepend SqliteExt::DbTracksCreatedFunctions
+    prepend SqliteExt::DbAutoCreatesRegisteredFunctions
+  else
+    puts 'Ruby < 2'
+    include SqliteExt::DbTracksCreatedFunctions
+    include SqliteExt::DbAutoCreatesRegisteredFunctions
+  end
 end
 
 module SqliteExt
