@@ -1,3 +1,7 @@
+### 1.5.0 - 2016-05-26
+* Enhancements
+  * Now works with Ruby versions prior to 2.x.
+
 ### 1.4.0 - 2016-05-26
 * Enhancements
   * `SqliteExt.register_ruby_math` now also registers `pi`, `e`, `mod`,
